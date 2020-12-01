@@ -1,0 +1,11 @@
+<h1>edit tweet</h1>
+<%= notice %>
+<%= form_for @tweet do |f| %>
+    <div>
+        <%= f.label :content %>
+        <%= f.text_area :content %>
+    </div>
+    <div>
+        <%= f.submit %>
+    </div>
+<% end %>

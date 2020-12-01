@@ -1,0 +1,16 @@
+<h1>Sign in</h1>
+    <%= notice %>
+    <%= form_for :login do |f| %>
+        <div>
+            <%= f.label :email %>
+            <%= f.text_field :email %>
+        </div>
+
+        <div>
+            <%= f.label :password %>
+            <%= f.password_field :password %>
+        </div>
+
+    <%= f.submit %>
+    
+    <% end %>
