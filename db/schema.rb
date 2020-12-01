@@ -10,33 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_01_111223) do
+ActiveRecord::Schema.define(version: 2020_12_01_152840) do
 
-  create_table "tags", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "tags_tweets", id: false, force: :cascade do |t|
-    t.integer "tag_id", null: false
+  create_table "tweets_usertags", id: false, force: :cascade do |t|
     t.integer "tweet_id", null: false
+    t.integer "usertag_id", null: false
   end
 
-  create_table "tweets", force: :cascade do |t|
-    t.string "content"
+  create_table "user_tags", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_tweets_on_user_id"
+    t.index ["user_id"], name: "index_user_tags_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "password_digest"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  add_foreign_key "tweets", "users"
+  add_foreign_key "user_tags", "users"
 end

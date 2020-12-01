@@ -1,35 +1,50 @@
 class Tweet < ApplicationRecord
   belongs_to :user
   has_and_belongs_to_many :tags
-  before_save :set_tags
+  has_and_belongs_to_many :usertags
+  before_save :update_tags
+  before_save :update_usertags
+  
+  def update_tags
+    self.tags = extract_hashtags
+  end
+
+  def update_usertags
+    self.usertags = extract_usertags
+  end
+
+  private
 
   def extract_hashtags
-    self.content.split(' ').filter do |elem|
-      elem.start_with?('#')
+    content.split(' ').filter do |word|
+      word.start_with?('#')
+
+    end.map do |hashtag|
+      fetched = Tag.find_by(label: hashtag)
+      
+      fetched || Tag.create(label: hashtag)
     end
   end
 
-  def get_hashtags_models(hashtags)
-    tags_return = []
-    for tag in hashtags
-      fetched_tag = Tag.find_by(label: tag)
-      if fetched_tag
-        tags_return.push(fetched_tag)
-      else
-        new_tag = Tag.create(label: tag)
-        tags_return.push(new_tag)
-      end
+  def find_by_mention(mention)
+    username = mention.delete_prefix("@")
+    mentionned_user = User.find_by(username: username)
+    if mentionned_user
+      fetched = Usertag.find_by(user_id: mentionned_user.id)
+      return fetched || Usertag.create(user: mentionned_user)
     end
-    tags_return
   end
 
-  def set_tags
-    hashtags = extract_hashtags
-    # Lire les tags pour récupérer le tag correspondant en base de données
-    new_tags = get_hashtags_models(hashtags)
-    # Lier les deux Tweet <-> Tag
-    self.tags = new_tags
+  def extract_usertags
+    content.split(' ').filter do |word|
+      word.start_with?("@")
+    end.map do |mention|
+      find_user_by_mention(mention)
+    end.filter do |user|
+      user != nil
+    end
   end
+
 end
 
 
